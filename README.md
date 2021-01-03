@@ -1,1 +1,0 @@
-# Docker_ASP.NET_Core_API_with_SQLServer
