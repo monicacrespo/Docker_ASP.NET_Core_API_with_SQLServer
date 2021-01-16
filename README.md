@@ -7,7 +7,7 @@ And it is linked to the SQL Server container as shown in the image below.
 Additionally, when the service startup, the database it is created and populated with an initial set of data.
 
 
-This is the connection string to the appsettings.json.
+This is the connection string within the appsettings.json.
 ```
 {
   "ConnectionStrings": {
