@@ -1,14 +1,14 @@
 # Entity Framework Core Containerized App with SQL Server 2017 within a Docker container in Visual Studio Code
 
 The motivation is to configure ASP.NET Core to run on Docker, then to configure SQL Server on Docker. 
-I have got already a simple CRUD ASP.NET Core app using EF Core as the database ORM with SQL Server as a backend to persist the gigs (MiniGig_Rest_Api_ASP.NET_Core_3.1 repository).
 
 DockerGigApi contains the connection information to the database, and the SQL Server Container. 
-And it is linked to the SQL Server container as shown in the image -1- below.
+And it is linked to the SQL Server container as shown in the image below.
 Additionally, when the service startup, the database it is created and populated with an initial set of data.
 
 
 This is the connection string to the appsettings.json.
+```
 {
   "ConnectionStrings": {
     "SqlConnection": "Data Source=sqlserver;Database=GigDB;User Id=sa;Password=2Secure*Password2"
@@ -22,29 +22,31 @@ This is the connection string to the appsettings.json.
   },
   "AllowedHosts": "*"
 }
+```
 
 Note: The hostname “sqlserver” does not exist in my machine or network.
 
 And I have registered the database context in the startup class as below.
+```
 public void ConfigureServices(IServiceCollection services)
-        {
-            var connection = Configuration.GetConnectionString("SqlConnection");
-            IServiceCollection serviceCollections = services.AddDbContext<GigContext>(opts =>
-            opts.UseSqlServer(connection,
-             sqlServerOptionsAction: sqlOptions =>
-             {
-                 sqlOptions.EnableRetryOnFailure();
-             })
-            );
+{
+    var connection = Configuration.GetConnectionString("SqlConnection");
+    IServiceCollection serviceCollections = services.AddDbContext<GigContext>(opts =>
+    opts.UseSqlServer(connection,
+	sqlServerOptionsAction: sqlOptions =>
+	{
+		sqlOptions.EnableRetryOnFailure();
+	})
+    );
 
-            services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
-            services.AddScoped<IGigService, GigService>();
-            services.AddControllers();
-        }
-		
+    services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
+    services.AddScoped<IGigService, GigService>();
+    services.AddControllers();
+}
+```		
 		
 This is the Dockerfile related to the DockerGigApi service. 
-
+```
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
 EXPOSE 80
@@ -64,11 +66,11 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "DockerGigApi.dll"]
-
+```
 
 Since we want the ASP.NET Core container and the SQL Server container to run together, we need to create a Docker Compose project.
 This is the docker-compose.yml. 
-
+```
 version: '3.4'
 
 services:
@@ -91,7 +93,7 @@ services:
       - '1433:1433'
     expose:
       - 1433
-	
+```	
 	
 
 To feed the database with some data, I will use Entity Framework Core migrations, but I wouldn't use the migration in production environment. 
@@ -100,7 +102,7 @@ I added an initial migration to the project. This is done using the dotnet CLI:
 dotnet ef migrations add InitialMigration
 
 This is the Program.cs 
-
+```
 public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
@@ -122,8 +124,10 @@ public static async Task Main(string[] args)
 
             host.Run();
         }
-		
-This is the GigContextSeed.cs 
+```
+
+This is the GigContextSeed.cs
+```
 public async static Task SeedAsync(GigContext gigContext, ILoggerFactory loggerFactory, int? retry = 0)
         {
             var log = loggerFactory.CreateLogger<GigContextSeed>();
@@ -156,16 +160,21 @@ public async static Task SeedAsync(GigContext gigContext, ILoggerFactory loggerF
                 throw;
             }
         }
-
+```
 Notes:
 * Binds port 80 of the 'dockergigapi' Docker container to port 8080 of the host machine
 * To access the api, we need to use port 8080 as follows: http://localhost:8080/api/gigs
 
 # Dependencies
 * Entity Framework Core Tools
-	dotnet tool install --global dotnet-ef --version 3.1.10
+```
+dotnet tool install --global dotnet-ef --version 3.1.10
+```
+
 * Entity Framework Core SqlServer
-	dotnet add package Microsoft.EntityFrameworkCore.SqlServer -version 3.1.10
+```
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer -version 3.1.10
+```
  
 
 # Getting Started
