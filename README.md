@@ -7,6 +7,10 @@ And it is linked to the SQL Server container as shown in the image below.
 Additionally, when the service startup, the database it is created and populated with an initial set of data.
 
 
+
+![DatabaseInContainer](https://github.com/monicacrespo/Docker_ASP.NET_Core_API_with_SQLServer/blob/main/Images/DatabaseInContainer.JPG)
+
+
 This is the connection string within the appsettings.json.
 ```
 {
@@ -181,3 +185,4 @@ dotnet add package Microsoft.EntityFrameworkCore.SqlServer -version 3.1.10
 To run the sample locally from Visual Studio Code:
 * docker-compose up
 * Press F5 and finally the browser displays the initial set of data http://localhost:5000/api/gigs
+![Gigs](https://github.com/monicacrespo/Docker_ASP.NET_Core_API_with_SQLServer/blob/main/Images/GetGigs.JPG)
