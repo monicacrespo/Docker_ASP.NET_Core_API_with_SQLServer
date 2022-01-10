@@ -184,5 +184,5 @@ dotnet add package Microsoft.EntityFrameworkCore.SqlServer -version 3.1.10
 # Getting Started
 To run the sample locally from Visual Studio Code:
 * docker-compose up
-* Press F5 and finally the browser displays the initial set of data http://localhost:5000/api/gigs
+* Press F5 and finally the browser displays the initial set of data http://localhost:8080/api/gigs
 ![Gigs](https://github.com/monicacrespo/Docker_ASP.NET_Core_API_with_SQLServer/blob/main/Images/GetGigs.JPG)
